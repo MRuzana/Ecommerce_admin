@@ -16,7 +16,7 @@ class Routes{
     '/dashboard':(context) => const DashBoardScreen(),
     '/users': (context) => const UsersScreen(),
     '/categories':(context) => CatogoriesScreen(),
-    '/add_products':(context) => AddProductsScreen(),
+    '/add_products':(context) => const AddProductsScreen(),
     '/orders':(context) => const OrdersScreen(),
     '/products':(context) => const ProductScreen(),
 

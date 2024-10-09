@@ -36,14 +36,36 @@ class GridviewWidget extends StatelessWidget {
                 Image.network(
                   banners['image'],
                   fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1)
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (BuildContext context, Object error,
+                      StackTrace? stackTrace) {
+                    return const Icon(
+                        Icons.error); // Placeholder for failed image loading
+                  },
                 ),
+                // Image.network(
+                //   banners['image'],
+                //   fit: BoxFit.cover,
+                // ),
                 Positioned(
-                    top: -12 ,
-                    right: -10 ,
+                    top: -12,
+                    right: -10,
                     child: IconButton(
                         onPressed: () {
-                          deleteAlert(banners,context,imageUrl);
-                          
+                          deleteAlert(banners, context, imageUrl);
                         },
                         icon: const Icon(
                           Icons.close,
@@ -56,7 +78,8 @@ class GridviewWidget extends StatelessWidget {
         });
   }
 
-  void deleteBanner(QueryDocumentSnapshot<Object?> banners,BuildContext context, String imageUrl) async {
+  void deleteBanner(QueryDocumentSnapshot<Object?> banners,
+      BuildContext context, String imageUrl) async {
     final docId = banners.id;
     try {
       await FirebaseFirestore.instance
@@ -70,8 +93,8 @@ class GridviewWidget extends StatelessWidget {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Banner deleted successfully!')),
+            backgroundColor: Colors.red,
+            content: Text('Banner deleted successfully!')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -80,27 +103,15 @@ class GridviewWidget extends StatelessWidget {
     }
   }
 
-  deleteAlert(QueryDocumentSnapshot<Object?> banners,BuildContext context, String imageUrl) {
-  showDialog(
-      context: context,
-      builder: (context) {
-        return DeleteAlert(onDelete: () {
-         deleteBanner(banners,context,imageUrl);
-          Navigator.of(context).pop();
+  deleteAlert(QueryDocumentSnapshot<Object?> banners, BuildContext context,
+      String imageUrl) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DeleteAlert(onDelete: () {
+            deleteBanner(banners, context, imageUrl);
+            Navigator.of(context).pop();
+          });
         });
-      });
+  }
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-

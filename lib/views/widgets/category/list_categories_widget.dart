@@ -1,4 +1,4 @@
-import 'package:clothing_admin_panel/views/widgets/category/gridview_category_widget.dart';
+import 'package:clothing_admin_panel/views/widgets/category/category_table_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class ListCategoriesWidget extends StatelessWidget {
         }
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           final categoryData = snapshot.data!.docs;
-          return GridViewCategoryWidget(categoryData: categoryData);
+          return CategoryTableWidget(categoryData: categoryData);
         }
         return const Center(child: Text('No categories added'));
       },

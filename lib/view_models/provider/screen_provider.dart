@@ -25,7 +25,7 @@ class ScreenProvider extends ChangeNotifier {
         _selectedItem = const OrdersScreen();
         break;
       case AddProductsScreen.routName:
-        _selectedItem = AddProductsScreen();
+        _selectedItem = const AddProductsScreen();
         break;
       case UsersScreen.routName:
         _selectedItem = const UsersScreen();

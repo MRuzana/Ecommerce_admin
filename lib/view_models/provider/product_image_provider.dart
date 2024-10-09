@@ -78,58 +78,13 @@ class ProductImageProvider extends ChangeNotifier {
     _fileNames.clear();
     notifyListeners();
   }
+
+    void removeImage(String imageUrl) {
+    imageUrls.remove(imageUrl);
+    if(_selectedImageUrl == imageUrl){
+       _selectedImageUrl = null;
+    }
+   
+    notifyListeners();
+  }
 }
-
-
-
-
-
-
-
-
-
-
-// class ProductImageProvider extends ChangeNotifier {
-//  final List<dynamic> _images = [];
-//  final List<String?> _fileNames = [];
-//   dynamic _selectedImage;
-
-//   Future<void> pickImages (BuildContext context) async {
-//     try {
-//       FilePickerResult? result = await FilePicker.platform
-//           .pickFiles(allowMultiple: true, type: FileType.image);
-
-//       if (result == null) return;
-
-
-//       List<dynamic> newImages = result.files.map((file) => file.bytes).toList();
-//       List<String?>  newFileNames = result.files.map((file) => file.name).toList();
-
-//       _images.addAll(newImages);
-//       _fileNames.addAll(newFileNames);
-
-//       if (_images.isNotEmpty) {
-//         _selectedImage = _images[0];
-//       }
-//       notifyListeners();
-//     } catch (e) {
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           backgroundColor: Colors.red,
-//           padding: const EdgeInsets.all(15),
-//           content: Text('Image not selected${e.toString()}')));
-//     }
-//   }
-
-//   dynamic get selectedImage {
-//     return _selectedImage ;
-//   }
-//   List<dynamic> get images => _images;
-//   List<String?> get fileNames => _fileNames;
-
-  
-//    void selectImage(dynamic image) {
-//     _selectedImage = image;
-//     notifyListeners(); // Notify listeners when the selected image changes
-//   }
-  
-// }

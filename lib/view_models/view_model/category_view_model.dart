@@ -27,9 +27,9 @@ class CategoryViewModel extends ChangeNotifier {
   }
 
   void deleteCategory(
-  QueryDocumentSnapshot<Object?> category,
-  BuildContext context, // Pass context as an argument
-) async {
+    QueryDocumentSnapshot<Object?> category,
+    BuildContext context, // Pass context as an argument
+  ) async {
   final docId = category.id;
 
   try {
@@ -55,13 +55,13 @@ class CategoryViewModel extends ChangeNotifier {
         .doc(docId)
         .delete();
 
-    ScaffoldMessenger.of(context).showSnackBar( // Access context here
+    ScaffoldMessenger.of(context).showSnackBar( 
       const SnackBar(
         backgroundColor: Colors.red,
         content: Text('Category deleted successfully!')),
     );
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar( // Access context here
+    ScaffoldMessenger.of(context).showSnackBar( 
       SnackBar(
         backgroundColor: Colors.red,
         content: Text('Error deleting category: $e')));
@@ -77,6 +77,27 @@ class CategoryViewModel extends ChangeNotifier {
           .collection('categories')
           .doc(docId)
           .update({'name': categoryController, 'type': selectedType});
+
+        // Find products with the corresponding category and update them
+    final productQuerySnapshot = await FirebaseFirestore.instance
+        .collection('products') 
+        .where('categoryId', isEqualTo: docId) 
+        .get();    
+
+     // Use a batch to update all products under this category
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (var productDoc in productQuerySnapshot.docs) {
+      // Assuming products have 'categoryName' and 'categoryType' fields that need updating
+      batch.update(productDoc.reference, {
+        'categoryName': categoryController,
+        'categoryType': selectedType,
+      });
+    }
+
+    // Commit the batch update
+    await batch.commit();  
+
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -90,3 +111,4 @@ class CategoryViewModel extends ChangeNotifier {
     }
   }
 }
+

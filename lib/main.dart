@@ -9,6 +9,7 @@ import 'package:clothing_admin_panel/view_models/provider/screen_provider.dart';
 import 'package:clothing_admin_panel/view_models/provider/size_provider.dart';
 import 'package:clothing_admin_panel/splash_screen.dart';
 import 'package:clothing_admin_panel/view_models/view_model/category_view_model.dart';
+import 'package:clothing_admin_panel/view_models/view_model/order_view_model.dart';
 import 'package:clothing_admin_panel/view_models/view_model/product_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -46,7 +47,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProductImageProvider()),
         ChangeNotifierProvider(create: (context) => DropdownCategoryProvider()),
         ChangeNotifierProvider(create: (context) => CategoryViewModel()),
-        ChangeNotifierProvider(create: (context) => ProductViewModel())
+        ChangeNotifierProvider(create: (context) => ProductViewModel()),
+        ChangeNotifierProvider(create: (context) => OrderViewModel()),
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

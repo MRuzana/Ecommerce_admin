@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:clothing_admin_panel/view_models/provider/dropdown_category_provider.dart';
 import 'package:clothing_admin_panel/view_models/provider/product_image_provider.dart';
 import 'package:clothing_admin_panel/view_models/provider/radioprovider.dart';
+import 'package:clothing_admin_panel/view_models/provider/screen_provider.dart';
 import 'package:clothing_admin_panel/view_models/provider/size_provider.dart';
+import 'package:clothing_admin_panel/views/screens/sidebar_screens/product_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,168 +13,86 @@ import 'package:provider/provider.dart';
 class ProductViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void uploadProduct({
-    required BuildContext context,
-    required String productName,
-    required String productDescription,
-    required String price,
-    required String stock,
-    String? productId,
-  }) async {
-     print("Received productId: $productId");
-    String productname = productName;
-    String productdescription = productDescription;
-    String productprice = price;
-    String productstock = stock;
+   uploadProduct({
+  required BuildContext context,
+  required String productName,
+  required String productDescription,
+  required String price,
+  required String stock,
+  required String categoryType,
+  required String categoryName,
+  required List<String> sizes,
+  required List<dynamic> imagesUrls,
+  String? productId,
+}) async {
+  String? categoryId = await getCategoryId(categoryName);
+  
+  final productData = {
+    'productName': productName,
+    'productDescription': productDescription,
+    'price': price,
+    'stock': stock,
+    'categoryType': categoryType,
+    'categoryName': categoryName,
+    'size': sizes,
+    'imagePath': imagesUrls,
+    'categoryId': categoryId,
+    'timestamp': FieldValue.serverTimestamp(),
+  };
 
-    // Fetching state from providers
-    String categoryType =
-        Provider.of<RadioProvider>(context, listen: false).selectedValue;
-    String categoryName =
-        Provider.of<DropdownCategoryProvider>(context, listen: false).selectedValue;
-    List<String> sizes =
-        Provider.of<SizeProvider>(context, listen: false).selectedSizes;
-    List<dynamic> imagesUrls =
-        Provider.of<ProductImageProvider>(context, listen: false).imageUrls ;
-    print('in upload = $imagesUrls');    
-   
-    String? categoryId = await getCategoryId(categoryName);
+  try {
 
-    final productData = {
-      'productName': productname,
-      'productDescription': productdescription,
-      'price': productprice,
-      'stock': productstock,
-      'categoryType': categoryType,
-      'categoryName': categoryName,
-      'imagePath': imagesUrls,
-      'size': sizes,
-      'categoryId': categoryId
-    };
+    if (productId != null && productId.isNotEmpty) {
+      // Update existing product
+      await _firestore.collection('products').doc(productId).update(productData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Product updated successfully!'),
+        ),
+      );
 
-    try {
-      if (productId != null && productId.isNotEmpty) {
-        print('inside update ');
-        // Update existing product
-        await _firestore.collection('products').doc(productId).update(productData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Product updated successfully!'),
-          ),
-        );
-      } else {
-        print('inside add ');
-        // Create new product
-        await _firestore.collection('products').add(productData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Product added successfully!'),
-          ),
-        );
-      }
-      // Clear provider states
-      clearProviderStates(context);
-      notifyListeners();
+      // Delay to allow snackbar to show
+     // await Future.delayed(const Duration(seconds: 3));
+      Navigator.of(context).pop();
 
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        content: Text('Failed to upload product: $e'),
-      ));
+    } else {
+      // Create new product
+      await _firestore.collection('products').add(productData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Product added successfully!'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      await Future.delayed(const Duration(seconds: 3));
     }
+
+    // Clear provider states
+    clearProviderStates(context);
+    notifyListeners();
+
+    // Navigate to the product screen
+    Provider.of<ScreenProvider>(context, listen: false).setSelectedItem(ProductScreen.routName);
+    
+  } catch (e) {
+    // Show error snackbar
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red,
+      content: Text('Failed to upload product: $e'),
+    ));
   }
+}
 
   // Method to clear provider states
   void clearProviderStates(BuildContext context) {
     Provider.of<RadioProvider>(context, listen: false).clearSelectedValue();
-    Provider.of<DropdownCategoryProvider>(context, listen: false).clearDropdownValue();
+    Provider.of<DropdownCategoryProvider>(context, listen: false)
+        .clearDropdownValue();
     Provider.of<SizeProvider>(context, listen: false).clearSizes();
     Provider.of<ProductImageProvider>(context, listen: false).clearImages();
   }
-
-
-
-
-
-
-
-
-
-
-
-
-  // void uploadProduct(
-  //     {required context,
-  //     required productName,
-  //     required productDescription,
-  //     required price,
-  //     required stock,
-  //     String? productId,
-  //   }) async {
-  //   String productname = productName;
-  //   String productdescription = productDescription;
-  //   String productprice = price;
-  //   String productstock = stock;
-  //   String categoryType =
-  //       Provider.of<RadioProvider>(context, listen: false).selectedValue;
-  //   String categoryName =
-  //       Provider.of<DropdownCategoryProvider>(context, listen: false)
-  //           .selectedValue;
-  //   List<String> sizes =
-  //       Provider.of<SizeProvider>(context, listen: false).selectedSizes;
-  //   List<dynamic> imagesUrls =
-  //       Provider.of<ProductImageProvider>(context, listen: false).imageUrls;
-  //   String? categoryId = await getCategoryId(categoryName);
-
-  //   try{
-  //      final productData = {
-  //     'productName': productname,
-  //     'productDescription': productdescription,
-  //     'price': productprice,
-  //     'stock': productstock,
-  //     'categoryType': categoryType,
-  //     'categoryName': categoryName,
-  //     'imagePath': imagesUrls,
-  //     'size': sizes,
-  //     'categoryId': categoryId
-  //   };
-
-  //   if (productId != null && productId.isNotEmpty) {
-  //       // Update existing product
-  //       await _firestore.collection('products').doc(productId).update(productData);
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           backgroundColor: Colors.green,
-  //           content: Text('Product updated successfully!')),
-  //       );
-  //     } else {
-  //       // Create new product
-  //       await _firestore.collection('products').add(productData);
-  //       ScaffoldMessenger.of(context).showSnackBar(
-          
-  //         const SnackBar(
-  //           backgroundColor: Colors.green,
-  //           content: Text('Product added successfully!')),
-  //       );
-  //     }
-
-  //     Provider.of<RadioProvider>(context, listen: false).clearSelectedValue();
-  //     Provider.of<DropdownCategoryProvider>(context, listen: false)
-  //         .clearDropdownValue();
-  //     Provider.of<SizeProvider>(context, listen: false).clearSizes();
-  //     Provider.of<ProductImageProvider>(context, listen: false).clearImages();
-
-  //     notifyListeners();
-  //   }
-  //   catch(e){
-  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         backgroundColor: Colors.red,
-  //         content: Text('Failed to upload product: $e')));
-  //   }
-  
-  // }
 
   void deleteProduct(String productId, BuildContext context) async {
     try {
@@ -179,14 +101,12 @@ class ProductViewModel extends ChangeNotifier {
           .doc(productId)
           .delete();
 
-      
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Product deleted successfully!'),
-          ),
-        );
-      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('Product deleted successfully!'),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
@@ -198,10 +118,10 @@ class ProductViewModel extends ChangeNotifier {
 }
 
 Future<String?> getCategoryId(String categoryName) async {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   try {
-    QuerySnapshot querySnapshot = await _firestore
+    QuerySnapshot querySnapshot = await firestore
         .collection('categories')
         .where('name', isEqualTo: categoryName)
         .get();
@@ -216,3 +136,4 @@ Future<String?> getCategoryId(String categoryName) async {
     return null;
   }
 }
+

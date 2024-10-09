@@ -36,8 +36,6 @@ class ImagePickerProvider extends ChangeNotifier {
     return _image;
   }
 
-
-
   uploadBannersToStorage(dynamic image) async {
     Reference ref = _storage.ref().child('Banners').child(fileName!);
     UploadTask uploadTask = ref.putData(image);
@@ -61,6 +59,7 @@ class ImagePickerProvider extends ChangeNotifier {
         _image = null;
         notifyListeners();
       });
+
     }
   }
 

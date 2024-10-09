@@ -10,7 +10,6 @@ class ProductModel {
   List<String>size;
   String? productId;
   
-
   ProductModel({
     required this.productName,
     required this.productDescription,

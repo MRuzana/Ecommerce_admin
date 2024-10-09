@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:provider/provider.dart';
 
-// final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
@@ -44,31 +42,6 @@ class MainScreen extends StatelessWidget {
         
       ),
       body: screenProvider.selectedItem
-      // body: Navigator(
-      //   key: _navigatorKey,
-      //   onGenerateRoute: (settings) {
-      //     // Route generation logic
-      //     switch (settings.name) {
-      //       case DashBoardScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => DashBoardScreen());
-      //       case UsersScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => UsersScreen());
-      //       case OrdersScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => OrdersScreen());
-      //       case AddProductsScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => AddProductsScreen());
-      //       case CatogoriesScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => CatogoriesScreen());
-      //       case BannerScreen.routName:
-      //         return MaterialPageRoute(builder: (context) => BannerScreen());
-      //       case NewScreen.routName: // Handle NewScreen route
-      //         return MaterialPageRoute(builder: (context) => NewScreen());
-      //       default:
-      //         return MaterialPageRoute(builder: (context) => DashBoardScreen()); // Default screen
-      //     }
-      //   },
-      //   initialRoute: screenProvider.selectedItem.isNotEmpty ? screenProvider.selectedItem : DashBoardScreen.routName,
-      // ),
     );
   }
 }

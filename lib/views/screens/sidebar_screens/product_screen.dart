@@ -1,4 +1,4 @@
-import 'package:clothing_admin_panel/views/widgets/product/gridview_product_widget.dart';
+import 'package:clothing_admin_panel/views/widgets/product/product_tableview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,12 +8,14 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('products',style: Theme.of(context).textTheme.headlineSmall,),
-        const SizedBox(height: 20,),
-        const ListProductWidget()
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Text('Products',style: Theme.of(context).textTheme.headlineSmall,),
+          const SizedBox(height: 20,),
+          const ListProductWidget()
+        ],
+      ),
     );
   }
 }
@@ -38,7 +40,7 @@ class ListProductWidget extends StatelessWidget {
         }
         if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
           final productData = snapshot.data!.docs;
-          return GridViewProductWidget(productData: productData);
+          return TableViewProduct(productData: productData);
         }
         return const Center(child: Text('No products added'));
       },
